@@ -179,10 +179,3 @@ This is a **demo application**. The auth system uses `btoa()` encoding (not real
 
 ---
 
-## 📝 License
-
-MIT License — Free to use, modify, and distribute.
-
----
-
-Made with ❤️ for the Indian startup community. 🇮🇳

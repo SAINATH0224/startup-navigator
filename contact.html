@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact the Startup Navigator team. We'd love to hear your questions, feedback, or partnership ideas.">
+  <title>Contact – Startup Navigator</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+
+<div class="container">
+  <div class="page-header">
+    <span class="section-label">Get In Touch</span>
+    <h1 class="page-header-title">Contact <span class="text-gradient">Us</span></h1>
+    <p class="page-header-desc">Have a question, feedback, or partnership idea? We'd love to hear from you.</p>
+  </div>
+
+  <div class="contact-layout">
+    <!-- Info -->
+    <div class="contact-info">
+      <div class="contact-info-item">
+        <div class="contact-info-icon">📧</div>
+        <div>
+          <div class="contact-info-title">Email</div>
+          <div class="contact-info-value">hello@startupnav.com</div>
+        </div>
+      </div>
+      <div class="contact-info-item">
+        <div class="contact-info-icon">🌐</div>
+        <div>
+          <div class="contact-info-title">Website</div>
+          <div class="contact-info-value">www.startupnav.com</div>
+        </div>
+      </div>
+      <div class="contact-info-item">
+        <div class="contact-info-icon">📍</div>
+        <div>
+          <div class="contact-info-title">Location</div>
+          <div class="contact-info-value">Bangalore, India 🇮🇳</div>
+        </div>
+      </div>
+      <div class="contact-info-item">
+        <div class="contact-info-icon">🤖</div>
+        <div>
+          <div class="contact-info-title">Quick Help</div>
+          <div class="contact-info-value">Try our <a href="ai-search.html" style="color:var(--primary)">AI Search</a> for instant answers</div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="card" style="margin-top:8px">
+        <h4 style="margin-bottom:16px">Quick FAQ</h4>
+        <div style="display:flex; flex-direction:column; gap:12px">
+          <div>
+            <p style="font-size:0.875rem; font-weight:600; color:var(--text-primary); margin-bottom:4px">Is this platform free?</p>
+            <p style="font-size:0.825rem">Yes! 100% free with no hidden fees or subscriptions.</p>
+          </div>
+          <div class="divider" style="margin:4px 0"></div>
+          <div>
+            <p style="font-size:0.875rem; font-weight:600; color:var(--text-primary); margin-bottom:4px">Can I suggest new topics?</p>
+            <p style="font-size:0.825rem">Absolutely! Use the contact form and we'll consider adding it.</p>
+          </div>
+          <div class="divider" style="margin:4px 0"></div>
+          <div>
+            <p style="font-size:0.875rem; font-weight:600; color:var(--text-primary); margin-bottom:4px">How accurate is the AI?</p>
+            <p style="font-size:0.825rem">Our AI is based on curated articles. Always verify legal/financial info with a professional.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="contact-form-card">
+      <h2 style="font-size:1.4rem; margin-bottom:8px">Send Us a Message</h2>
+      <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:32px">We typically respond within 24 hours.</p>
+
+      <form class="contact-form" id="contact-form" novalidate>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px">
+          <div class="form-group">
+            <label class="form-label" for="contact-name">Your Name *</label>
+            <input class="form-input" type="text" id="contact-name" name="name" placeholder="Rahul Sharma" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="contact-email">Email Address *</label>
+            <input class="form-input" type="email" id="contact-email" name="email" placeholder="rahul@example.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="contact-subject">Subject *</label>
+          <select class="form-input form-select" id="contact-subject" name="subject" required>
+            <option value="" disabled selected>Select a subject</option>
+            <option>General Question</option>
+            <option>Content Suggestion</option>
+            <option>Bug Report</option>
+            <option>Partnership Inquiry</option>
+            <option>Feedback</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="contact-message">Message *</label>
+          <textarea class="form-input form-textarea" id="contact-message" name="message" placeholder="Tell us how we can help..." rows="5" required></textarea>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px">
+          <input type="checkbox" id="contact-consent" required style="width:16px; height:16px; accent-color:var(--primary)">
+          <label for="contact-consent" style="font-size:0.825rem; color:var(--text-muted)">I agree to receive a response to this message.</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="contact-submit-btn">
+          📬 Send Message
+        </button>
+
+        <div id="contact-success" style="display:none; text-align:center; padding:20px; background:rgba(67,198,172,0.1); border:1px solid rgba(67,198,172,0.2); border-radius:var(--radius-md)">
+          <div style="font-size:2rem; margin-bottom:12px">✅</div>
+          <h4 style="color:var(--accent-green); margin-bottom:8px">Message Sent!</h4>
+          <p style="font-size:0.875rem; color:var(--text-muted)">Thanks for reaching out. We'll get back to you within 24 hours.</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Pre-fill if logged in
+    const user = Auth.getCurrentUser();
+    if (user) {
+      const nameEl = document.getElementById('contact-name');
+      const emailEl = document.getElementById('contact-email');
+      if (nameEl) nameEl.value = user.name;
+      if (emailEl) emailEl.value = user.email;
+    }
+
+    const form = document.getElementById('contact-form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const subject = document.getElementById('contact-subject').value;
+      const message = document.getElementById('contact-message').value.trim();
+      const consent = document.getElementById('contact-consent').checked;
+
+      if (!name) { showToast('Please enter your name.', 'error'); return; }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Please enter a valid email.', 'error'); return; }
+      if (!subject) { showToast('Please select a subject.', 'error'); return; }
+      if (message.length < 10) { showToast('Message must be at least 10 characters.', 'error'); return; }
+      if (!consent) { showToast('Please check the consent box.', 'error'); return; }
+
+      const btn = document.getElementById('contact-submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      saveContact({ name, email, subject, message });
+
+      setTimeout(() => {
+        form.reset();
+        document.getElementById('contact-success').style.display = 'block';
+        btn.style.display = 'none';
+        showToast('Message sent successfully!', 'success');
+      }, 1200);
+    });
+  });
+</script>
+</body>
+</html>

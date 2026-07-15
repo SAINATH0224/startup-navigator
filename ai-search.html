@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI-powered startup assistant on Startup Navigator. Ask any question about startup registration, funding, taxes, hiring and get instant answers.">
+  <title>AI Search – Startup Navigator</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+
+<div class="container">
+  <div class="page-header" style="padding-bottom:24px">
+    <span class="section-label">AI Assistant</span>
+    <h1 class="page-header-title">Ask <span class="text-gradient">Startup AI</span></h1>
+    <p class="page-header-desc">Ask any startup-related question and get instant, intelligent answers powered by our knowledge base.</p>
+  </div>
+
+  <div class="ai-search-layout">
+    <!-- Main Chat Area -->
+    <div class="ai-main">
+      <!-- Chat Messages -->
+      <div class="chat-area" id="chat-area">
+        <!-- Welcome screen -->
+        <div class="ai-welcome" id="ai-welcome">
+          <div class="ai-welcome-icon">🤖</div>
+          <h2>Hello! I'm <span class="text-gradient">StartupAI</span></h2>
+          <p>Ask me anything about starting, registering, funding, or growing a startup in India. I'll give you instant, practical answers.</p>
+          <div class="ai-suggestions">
+            <button class="ai-suggestion-btn" onclick="useSuggestion(this)" id="sug-1">How do I register a startup in India?</button>
+            <button class="ai-suggestion-btn" onclick="useSuggestion(this)" id="sug-2">How do I get funding for my startup?</button>
+            <button class="ai-suggestion-btn" onclick="useSuggestion(this)" id="sug-3">What taxes should I pay as a startup?</button>
+            <button class="ai-suggestion-btn" onclick="useSuggestion(this)" id="sug-4">How do I hire my first employee?</button>
+            <button class="ai-suggestion-btn" onclick="useSuggestion(this)" id="sug-5">What is angel tax and how to avoid it?</button>
+            <button class="ai-suggestion-btn" onclick="useSuggestion(this)" id="sug-6">How to build a pitch deck for investors?</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="ai-input-area">
+        <form class="ai-input-form" id="ai-form" onsubmit="handleSearch(event)">
+          <textarea
+            class="ai-input"
+            id="ai-input"
+            placeholder="Ask anything about startups... (Press Enter to send)"
+            rows="1"
+            maxlength="500"
+          ></textarea>
+          <button type="submit" class="ai-send-btn" id="ai-send-btn" aria-label="Send message">
+            ➤
+          </button>
+        </form>
+        <p style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:8px">
+          AI answers are based on our startup knowledge base. Always verify with a professional for legal/financial decisions.
+        </p>
+      </div>
+    </div>
+
+    <!-- Sidebar: Recent Searches -->
+    <aside class="ai-sidebar">
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:1rem; font-weight:700; margin-bottom:4px">Recent Searches</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted)">Your search history</p>
+      </div>
+      <div class="searches-list" id="recent-searches-list">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div style="margin-top:32px">
+        <h3 style="font-size:0.875rem; font-weight:700; margin-bottom:16px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em">Quick Topics</h3>
+        <div style="display:flex; flex-direction:column; gap:8px">
+          <a href="topic-detail.html?id=company-registration" class="topic-tag" style="justify-content:flex-start">🏢 Company Registration</a>
+          <a href="topic-detail.html?id=funding" class="topic-tag" style="justify-content:flex-start">💰 Funding</a>
+          <a href="topic-detail.html?id=taxation" class="topic-tag" style="justify-content:flex-start">🧾 Taxation</a>
+          <a href="topic-detail.html?id=legal-compliance" class="topic-tag" style="justify-content:flex-start">⚖️ Legal Compliance</a>
+          <a href="topic-detail.html?id=hiring" class="topic-tag" style="justify-content:flex-start">👥 Hiring</a>
+          <a href="explore.html" class="topic-tag" style="justify-content:flex-start; color:var(--primary)">→ All Topics</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/app.js"></script>
+<script>
+  let chatStarted = false;
+
+  // Auto-resize textarea
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('ai-input');
+
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    });
+
+    // Enter to send (Shift+Enter for new line)
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('ai-form').dispatchEvent(new Event('submit'));
+      }
+    });
+
+    // Pre-fill from URL param
+    const q = getParam('q');
+    if (q) {
+      input.value = decodeURIComponent(q);
+      setTimeout(() => handleSearch(null), 500);
+    }
+
+    renderRecentSearches();
+  });
+
+  function useSuggestion(btn) {
+    const query = btn.textContent;
+    document.getElementById('ai-input').value = query;
+    handleSearch(null);
+  }
+
+  async function handleSearch(event) {
+    if (event) event.preventDefault();
+
+    const input = document.getElementById('ai-input');
+    const query = input.value.trim();
+    if (!query) return;
+
+    input.value = '';
+    input.style.height = 'auto';
+
+    // Hide welcome screen
+    if (!chatStarted) {
+      const welcome = document.getElementById('ai-welcome');
+      if (welcome) welcome.remove();
+      chatStarted = true;
+    }
+
+    // Add user message
+    addMessage('user', query);
+
+    // Disable send button
+    const sendBtn = document.getElementById('ai-send-btn');
+    sendBtn.disabled = true;
+
+    // Show typing indicator
+    const typingId = addTypingIndicator();
+
+    // Simulate AI thinking delay
+    await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
+
+    // Get AI response
+    const result = AI.search(query);
+
+    // Remove typing indicator
+    removeTypingIndicator(typingId);
+
+    // Add AI response
+    addAIMessage(result, query);
+
+    // Save search history
+    const user = Auth.getCurrentUser();
+    saveSearch(query, user ? user.id : 'anonymous');
+    renderRecentSearches();
+
+    sendBtn.disabled = false;
+    input.focus();
+  }
+
+  function addMessage(type, content) {
+    const chatArea = document.getElementById('chat-area');
+    const user = Auth.getCurrentUser();
+    const initial = user ? user.name.charAt(0).toUpperCase() : 'G';
+
+    const div = document.createElement('div');
+    div.className = `chat-message ${type}`;
+
+    if (type === 'user') {
+      div.innerHTML = `
+        <div class="chat-avatar user-msg-avatar">${initial}</div>
+        <div class="chat-bubble user-bubble">${escapeHtml(content)}</div>
+      `;
+    }
+
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    return div;
+  }
+
+  function addAIMessage(result, query) {
+    const chatArea = document.getElementById('chat-area');
+
+    const formattedAnswer = AI.formatResponse(result.answer);
+    const relatedTopics = result.relatedTopics || [];
+
+    const div = document.createElement('div');
+    div.className = 'chat-message';
+    div.innerHTML = `
+      <div class="chat-avatar ai-avatar">🤖</div>
+      <div class="chat-bubble ai-bubble">
+        <p class="ai-para">${formattedAnswer}</p>
+        ${relatedTopics.length > 0 ? `
+          <div class="ai-related">
+            <h5>Related Topics</h5>
+            <div class="ai-related-chips">
+              ${relatedTopics.map(t => `<a href="topic-detail.html?id=${t.id}" class="ai-related-chip">${t.icon} ${t.title}</a>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+        ${result.topicId ? `
+          <div style="margin-top:16px">
+            <a href="topic-detail.html?id=${result.topicId}" class="btn btn-secondary btn-sm">📚 Read Full Guide: ${result.topicTitle} →</a>
+          </div>
+        ` : ''}
+      </div>
+    `;
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function addTypingIndicator() {
+    const chatArea = document.getElementById('chat-area');
+    const id = 'typing-' + Date.now();
+    const div = document.createElement('div');
+    div.className = 'chat-message';
+    div.id = id;
+    div.innerHTML = `
+      <div class="chat-avatar ai-avatar">🤖</div>
+      <div class="chat-bubble ai-bubble">
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    `;
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    return id;
+  }
+
+  function removeTypingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function renderRecentSearches() {
+    const list = document.getElementById('recent-searches-list');
+    const user = Auth.getCurrentUser();
+
+    let searches;
+    if (user) {
+      searches = getSearchesByUser(user.id).slice(0, 8);
+    } else {
+      searches = getSearches().filter(s => s.userId === 'anonymous').slice(0, 5);
+    }
+
+    if (searches.length === 0) {
+      list.innerHTML = `
+        <div style="text-align:center; padding:20px 0; color:var(--text-muted); font-size:0.825rem">
+          ${user ? 'Your searches will appear here.' : '<a href="login.html" style="color:var(--primary)">Login</a> to save your search history.'}
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = searches.map(s => `
+      <button class="search-item" onclick="document.getElementById('ai-input').value = '${escapeHtml(s.query)}'; handleSearch(null);">
+        <span style="color:var(--text-muted); font-size:0.9rem">🔍</span>
+        <span class="search-item-query">${escapeHtml(s.query)}</span>
+        <span class="search-item-time">${formatRelativeTime(s.timestamp)}</span>
+      </button>
+    `).join('');
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+  }
+</script>
+</body>
+</html>

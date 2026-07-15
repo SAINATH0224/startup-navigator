@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login or register to Startup Navigator – save your search history and personalize your experience.">
+  <title>Login – Startup Navigator</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">🚀</div>
+      <h2>Welcome to <span class="text-gradient">StartupNav</span></h2>
+      <p>Sign in to save your searches and personalize your experience.</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login" id="tab-login" onclick="switchTab('login')">Login</button>
+      <button class="auth-tab" data-tab="register" id="tab-register" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form-container">
+      <form class="auth-form" id="login-form" novalidate onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">📧</span>
+            <input class="form-input" type="email" id="login-email" placeholder="you@example.com" required autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <div class="password-toggle-wrapper">
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input class="form-input" type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
+            </div>
+            <button type="button" class="password-toggle" id="toggle-login-pw" onclick="togglePassword('login-password', this)">👁️</button>
+          </div>
+        </div>
+
+        <div id="login-error" style="display:none" class="form-error">
+          <span>⚠️</span><span id="login-error-msg"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-submit-btn">
+          🚪 Login
+        </button>
+      </form>
+
+      <!-- Admin Demo Credentials -->
+      <div class="demo-creds">
+        <p><strong>🛡️ Admin Demo:</strong><br>Email: <strong>admin@startupnav.com</strong><br>Password: <strong>Admin@123</strong></p>
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-form-container" style="display:none">
+      <form class="auth-form" id="register-form" novalidate onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Full Name</label>
+          <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+            <input class="form-input" type="text" id="reg-name" placeholder="Rahul Sharma" required autocomplete="name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">📧</span>
+            <input class="form-input" type="email" id="reg-email" placeholder="you@example.com" required autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <p class="form-helper" style="margin-bottom:8px">At least 6 characters</p>
+          <div class="password-toggle-wrapper">
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input class="form-input" type="password" id="reg-password" placeholder="Create a strong password" required autocomplete="new-password">
+            </div>
+            <button type="button" class="password-toggle" onclick="togglePassword('reg-password', this)">👁️</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-confirm">Confirm Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input class="form-input" type="password" id="reg-confirm" placeholder="Repeat your password" required autocomplete="new-password">
+          </div>
+        </div>
+
+        <div id="reg-error" style="display:none" class="form-error">
+          <span>⚠️</span><span id="reg-error-msg"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="reg-submit-btn">
+          🎉 Create Account
+        </button>
+      </form>
+    </div>
+
+    <!-- Switch link -->
+    <p style="text-align:center; font-size:0.85rem; color:var(--text-muted); margin-top:24px" id="switch-text">
+      Don't have an account? <button class="btn btn-ghost btn-sm" onclick="switchTab('register')" style="padding:4px 8px">Register free →</button>
+    </p>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // Redirect if already logged in
+  document.addEventListener('DOMContentLoaded', () => {
+    if (Auth.isLoggedIn()) {
+      const redirect = getParam('redirect');
+      window.location.href = redirect ? decodeURIComponent(redirect) : 'index.html';
+    }
+  });
+
+  function switchTab(tab) {
+    const loginContainer = document.getElementById('login-form-container');
+    const regContainer = document.getElementById('register-form-container');
+    const loginTab = document.getElementById('tab-login');
+    const regTab = document.getElementById('tab-register');
+    const switchText = document.getElementById('switch-text');
+
+    if (tab === 'login') {
+      loginContainer.style.display = 'block';
+      regContainer.style.display = 'none';
+      loginTab.classList.add('active');
+      regTab.classList.remove('active');
+      switchText.innerHTML = `Don't have an account? <button class="btn btn-ghost btn-sm" onclick="switchTab('register')" style="padding:4px 8px">Register free →</button>`;
+    } else {
+      loginContainer.style.display = 'none';
+      regContainer.style.display = 'block';
+      loginTab.classList.remove('active');
+      regTab.classList.add('active');
+      switchText.innerHTML = `Already have an account? <button class="btn btn-ghost btn-sm" onclick="switchTab('login')" style="padding:4px 8px">Login →</button>`;
+    }
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const btn = document.getElementById('login-submit-btn');
+    const errorEl = document.getElementById('login-error');
+    const errorMsg = document.getElementById('login-error-msg');
+
+    btn.disabled = true;
+    btn.textContent = 'Logging in...';
+    errorEl.style.display = 'none';
+
+    await new Promise(r => setTimeout(r, 600));
+
+    const result = Auth.login(email, password);
+
+    if (result.success) {
+      showToast(`Welcome back, ${result.user.name}! 👋`, 'success');
+      setTimeout(() => {
+        const redirect = getParam('redirect');
+        window.location.href = redirect ? decodeURIComponent(redirect) : (result.user.role === 'admin' ? 'admin.html' : 'index.html');
+      }, 500);
+    } else {
+      errorMsg.textContent = result.error;
+      errorEl.style.display = 'flex';
+      btn.disabled = false;
+      btn.textContent = '🚪 Login';
+    }
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault();
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const confirm = document.getElementById('reg-confirm').value;
+    const btn = document.getElementById('reg-submit-btn');
+    const errorEl = document.getElementById('reg-error');
+    const errorMsg = document.getElementById('reg-error-msg');
+
+    btn.disabled = true;
+    btn.textContent = 'Creating account...';
+    errorEl.style.display = 'none';
+
+    if (password !== confirm) {
+      errorMsg.textContent = 'Passwords do not match.';
+      errorEl.style.display = 'flex';
+      btn.disabled = false;
+      btn.textContent = '🎉 Create Account';
+      return;
+    }
+
+    await new Promise(r => setTimeout(r, 800));
+
+    const result = Auth.register(name, email, password);
+
+    if (result.success) {
+      showToast(`Account created! Welcome to StartupNav, ${name}! 🎉`, 'success');
+      setTimeout(() => {
+        const redirect = getParam('redirect');
+        window.location.href = redirect ? decodeURIComponent(redirect) : 'index.html';
+      }, 800);
+    } else {
+      errorMsg.textContent = result.error;
+      errorEl.style.display = 'flex';
+      btn.disabled = false;
+      btn.textContent = '🎉 Create Account';
+    }
+  }
+
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁️';
+    }
+  }
+</script>
+</body>
+</html>

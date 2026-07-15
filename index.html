@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Startup Navigator – Your comprehensive guide to building a successful startup. Learn about company registration, funding, legal compliance, hiring, and more.">
+  <title>Startup Navigator – Comprehensive Guide to Startups</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div id="navbar-placeholder"></div>
+
+<!-- ─── HERO ─────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        India's #1 Startup Learning Platform
+      </div>
+      <h1 class="hero-title">
+        Build Your <span class="text-gradient">Dream Startup</span><br>From Scratch
+      </h1>
+      <p class="hero-description">
+        Everything you need to know about starting, registering, funding, and growing a successful startup in India — organized, simple, and free.
+      </p>
+      <div class="hero-actions">
+        <a href="explore.html" class="btn btn-primary btn-lg" id="hero-explore-btn">
+          🚀 Explore Topics
+        </a>
+        <a href="ai-search.html" class="btn btn-secondary btn-lg" id="hero-ai-btn">
+          🤖 Ask AI
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-value">10+</div>
+          <div class="hero-stat-label">Startup Topics</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">20+</div>
+          <div class="hero-stat-label">Free Resources</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">100%</div>
+          <div class="hero-stat-label">Free & Open</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Cards -->
+  <div class="hero-floats">
+    <div class="float-card">
+      <span class="float-icon">🏢</span>
+      <div>
+        <div class="float-label">Latest Guide</div>
+        <div class="float-value">Company Registration</div>
+      </div>
+    </div>
+    <div class="float-card">
+      <span class="float-icon">💰</span>
+      <div>
+        <div class="float-label">Trending Topic</div>
+        <div class="float-value">Startup Funding 2025</div>
+      </div>
+    </div>
+    <div class="float-card">
+      <span class="float-icon">🤖</span>
+      <div>
+        <div class="float-label">AI Search</div>
+        <div class="float-value">Get instant answers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">What We Offer</span>
+      <h2 class="section-title">Everything to <span class="text-gradient">Launch Your Vision</span></h2>
+      <p class="section-subtitle">A complete knowledge hub built specifically for Indian startups and aspiring entrepreneurs.</p>
+    </div>
+
+    <div class="features-grid" id="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(108,99,255,0.15)">📚</div>
+        <div class="feature-title">In-Depth Guides</div>
+        <p class="feature-desc">Step-by-step articles covering every stage of startup building — from idea to IPO.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(255,101,132,0.15)">🤖</div>
+        <div class="feature-title">AI-Powered Search</div>
+        <p class="feature-desc">Ask any startup question in plain English and get instant, intelligent answers.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(67,198,172,0.15)">📎</div>
+        <div class="feature-title">Ready-to-Use Templates</div>
+        <p class="feature-desc">Download pitch decks, business plans, legal documents, and ESOP policies for free.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(245,158,11,0.15)">🔗</div>
+        <div class="feature-title">Curated Resources</div>
+        <p class="feature-desc">Government portals, funding platforms, and tools — all in one organized resource hub.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── POPULAR TOPICS ────────────────────────────── -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-label">Explore</span>
+      <h2 class="section-title">Popular <span class="text-gradient">Startup Topics</span></h2>
+      <p class="section-subtitle">Start with what matters most for your startup stage.</p>
+    </div>
+
+    <div class="topics-preview reveal" id="home-topics-preview">
+      <!-- Rendered by JS -->
+    </div>
+
+    <div style="text-align:center; margin-top: 40px;">
+      <a href="explore.html" class="btn btn-secondary" id="home-view-all-btn">View All Topics →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TOPICS GRID PREVIEW ───────────────────────── -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="topics-grid" id="home-topics-grid">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA SECTION ───────────────────────────────── -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="cta-section reveal">
+      <h2 class="cta-title">Have a Startup Question? <span class="text-gradient">Ask Our AI</span></h2>
+      <p class="cta-desc">Our intelligent assistant can answer your specific questions about registration, funding, taxation, and more — instantly.</p>
+      <div class="cta-actions">
+        <a href="ai-search.html" class="btn btn-primary btn-lg" id="cta-ai-btn">🤖 Try AI Search</a>
+        <a href="resources.html" class="btn btn-secondary btn-lg" id="cta-resources-btn">📚 Browse Resources</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Render topic tags
+    const topics = getTopics().slice(0, 8);
+    const tagsContainer = document.getElementById('home-topics-preview');
+    if (tagsContainer) {
+      tagsContainer.innerHTML = topics.map(t =>
+        `<a href="topic-detail.html?id=${t.id}" class="topic-tag" id="tag-${t.id}">${t.icon} ${t.title}</a>`
+      ).join('');
+    }
+
+    // Render topic cards (first 6)
+    const gridContainer = document.getElementById('home-topics-grid');
+    if (gridContainer) {
+      gridContainer.innerHTML = topics.slice(0, 6).map(t => `
+        <a href="topic-detail.html?id=${t.id}" class="topic-card reveal" style="--card-accent: ${t.color}" id="home-card-${t.id}">
+          <span class="topic-card-icon">${t.icon}</span>
+          <div class="topic-card-title">${t.title}</div>
+          <div class="topic-card-desc">${t.shortDesc}</div>
+          <div class="topic-card-footer">
+            <span class="topic-card-meta">${(t.steps || []).length} steps</span>
+            <span class="topic-card-arrow">→</span>
+          </div>
+        </a>
+      `).join('');
+    }
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  });
+</script>
+</body>
+</html>

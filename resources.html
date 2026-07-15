@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Startup Navigator Resources – Government links, templates, legal documents, funding platforms and more for Indian startups.">
+  <title>Resources – Startup Navigator</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+
+<div class="container">
+  <div class="page-header">
+    <span class="section-label">Resource Hub</span>
+    <h1 class="page-header-title">Startup <span class="text-gradient">Resources</span></h1>
+    <p class="page-header-desc">Curated collection of government links, templates, legal documents, and tools for Indian startups.</p>
+  </div>
+
+  <!-- Controls -->
+  <div class="resources-controls">
+    <div class="search-bar" style="flex:1; min-width:260px">
+      <span style="color:var(--text-muted)">🔍</span>
+      <input type="search" id="resource-search" placeholder="Search resources..." aria-label="Search resources">
+    </div>
+    <div class="filter-pills" id="resource-filters">
+      <button class="filter-pill active" data-cat="all" id="res-filter-all">All</button>
+      <button class="filter-pill" data-cat="Government" id="res-filter-gov">🏛️ Government</button>
+      <button class="filter-pill" data-cat="Templates" id="res-filter-tmpl">📄 Templates</button>
+      <button class="filter-pill" data-cat="Legal" id="res-filter-legal">⚖️ Legal</button>
+      <button class="filter-pill" data-cat="Funding" id="res-filter-fund">💰 Funding</button>
+      <button class="filter-pill" data-cat="Tools" id="res-filter-tools">🔧 Tools</button>
+    </div>
+  </div>
+
+  <!-- Count -->
+  <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom:24px" id="res-count"></p>
+
+  <!-- Resources Grid -->
+  <div class="resources-grid" id="resources-grid">
+    <div class="loading-state" style="grid-column:1/-1"><div class="spinner"></div><p>Loading resources...</p></div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+  let currentCat = 'all';
+  let searchQuery = '';
+
+  function renderResources() {
+    const grid = document.getElementById('resources-grid');
+    const count = document.getElementById('res-count');
+    const all = getResources();
+
+    let filtered = all;
+
+    if (currentCat !== 'all') {
+      filtered = filtered.filter(r => r.category === currentCat);
+    }
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(r =>
+        r.title.toLowerCase().includes(q) ||
+        r.description.toLowerCase().includes(q) ||
+        (r.tags || []).some(t => t.includes(q)) ||
+        r.category.toLowerCase().includes(q)
+      );
+    }
+
+    count.textContent = `Showing ${filtered.length} of ${all.length} resources`;
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">🔍</div>
+          <h3>No resources found</h3>
+          <p>Try a different search or category.</p>
+          <button class="btn btn-secondary" style="margin-top:16px" onclick="clearResourceSearch()">Clear Filters</button>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(res => `
+      <div class="resource-card" id="res-${res.id}">
+        <div class="resource-card-header">
+          <span class="resource-icon">${res.icon}</span>
+          <div>
+            <div class="resource-title">${res.title}</div>
+            <div class="resource-desc">${res.description}</div>
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:4px">
+          ${(res.tags || []).slice(0, 3).map(tag => `<span style="padding:2px 8px; background:var(--bg-elevated); border-radius:99px; font-size:0.7rem; color:var(--text-muted)">${tag}</span>`).join('')}
+        </div>
+        <div class="resource-footer">
+          <span class="badge badge-${res.category.toLowerCase()}">${res.category}</span>
+          <a href="${res.url}" target="${res.url.startsWith('#') ? '_self' : '_blank'}" rel="noopener"
+             class="btn btn-primary btn-sm" id="visit-${res.id}"
+             onclick="${res.url.startsWith('#') ? "showToast('Template download coming soon!', 'info'); return false;" : ''}">
+            ${res.isDownload ? '⬇️ Download' : '🔗 Visit'}
+          </a>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function clearResourceSearch() {
+    document.getElementById('resource-search').value = '';
+    searchQuery = '';
+    currentCat = 'all';
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    document.getElementById('res-filter-all').classList.add('active');
+    renderResources();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Check URL cat param
+    const catParam = getParam('cat');
+    if (catParam) {
+      currentCat = catParam;
+      document.querySelectorAll('.filter-pill').forEach(p => {
+        p.classList.toggle('active', p.dataset.cat === catParam);
+      });
+    }
+
+    renderResources();
+
+    // Search
+    document.getElementById('resource-search').addEventListener('input', debounce((e) => {
+      searchQuery = e.target.value.trim().toLowerCase();
+      renderResources();
+    }, 250));
+
+    // Filter pills
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentCat = pill.dataset.cat;
+        renderResources();
+      });
+    });
+  });
+</script>
+</body>
+</html>

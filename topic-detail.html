@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Startup Navigator – Detailed startup guides with step-by-step explanations and related resources.">
+  <title>Topic – Startup Navigator</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+
+<div class="container" id="page-content">
+  <div class="loading-state" style="padding-top:80px">
+    <div class="spinner"></div>
+    <p>Loading article...</p>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const topicId = getParam('id');
+    const container = document.getElementById('page-content');
+
+    if (!topicId) {
+      container.innerHTML = `<div class="empty-state" style="padding-top:80px"><div class="empty-icon">❌</div><h3>Topic not found</h3><a href="explore.html" class="btn btn-primary" style="margin-top:16px">Browse All Topics</a></div>`;
+      return;
+    }
+
+    const topic = getTopicById(topicId);
+    if (!topic) {
+      container.innerHTML = `<div class="empty-state" style="padding-top:80px"><div class="empty-icon">❌</div><h3>Topic not found</h3><p>This topic may have been deleted.</p><a href="explore.html" class="btn btn-primary" style="margin-top:16px">Browse All Topics</a></div>`;
+      return;
+    }
+
+    // Update page title
+    document.title = `${topic.title} – Startup Navigator`;
+    document.querySelector('meta[name="description"]').setAttribute('content', topic.description);
+
+    // Get related resources
+    const allResources = getResources();
+    const relatedRes = allResources.filter(r =>
+      (topic.relatedResources || []).includes(r.id)
+    ).slice(0, 4);
+
+    // Get other topics for sidebar
+    const otherTopics = getTopics().filter(t => t.id !== topicId).slice(0, 5);
+
+    container.innerHTML = `
+      <!-- Breadcrumb -->
+      <div style="padding: 24px 0 0">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a>
+          <span class="breadcrumb-sep">›</span>
+          <a href="explore.html">Explore Topics</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">${topic.title}</span>
+        </div>
+      </div>
+
+      <!-- Topic Hero -->
+      <div class="topic-detail-hero">
+        <div class="topic-detail-hero-inner">
+          <div class="topic-hero-icon">${topic.icon}</div>
+          <h1 class="topic-hero-title">${topic.title}</h1>
+          <p class="topic-hero-desc">${topic.description}</p>
+          <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap">
+            <span class="badge badge-default">📋 ${(topic.steps || []).length} Steps</span>
+            <span class="badge badge-default">⏱️ 10-15 min read</span>
+            <span class="badge" style="background:rgba(108,99,255,0.15); color:var(--primary)">📚 In-Depth Guide</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layout -->
+      <div class="topic-detail-layout">
+        <!-- Main Content -->
+        <div class="topic-main">
+          <div style="margin-bottom:32px">
+            <h2 style="font-size:1.3rem; margin-bottom:8px; color:var(--text-primary)">Step-by-Step Guide</h2>
+            <p style="font-size:0.875rem; color:var(--text-muted)">Follow these steps to get started with ${topic.title.toLowerCase()}.</p>
+          </div>
+
+          <div class="step-list">
+            ${(topic.steps || []).map(step => `
+              <div class="step-item">
+                <div class="step-number">${step.step}</div>
+                <div class="step-content">
+                  <div class="step-title">${step.title}</div>
+                  <div class="step-desc">${step.content}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          ${relatedRes.length > 0 ? `
+            <div style="margin-top:48px">
+              <h2 style="font-size:1.3rem; margin-bottom:8px">Related Resources</h2>
+              <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:24px">Useful links and downloads for ${topic.title.toLowerCase()}.</p>
+              <div style="display:grid; gap:16px">
+                ${relatedRes.map(res => `
+                  <div class="resource-card">
+                    <div class="resource-card-header">
+                      <span class="resource-icon">${res.icon}</span>
+                      <div>
+                        <div class="resource-title">${res.title}</div>
+                        <div class="resource-desc">${res.description}</div>
+                      </div>
+                    </div>
+                    <div class="resource-footer">
+                      <span class="badge badge-${res.category.toLowerCase()}">${res.category}</span>
+                      <a href="${res.url}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" id="res-link-${res.id}">
+                        ${res.isDownload ? '⬇️ Download' : '🔗 Visit'}
+                      </a>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Ask AI CTA -->
+          <div style="margin-top:48px; background:var(--primary-light); border:1px solid rgba(108,99,255,0.25); border-radius:var(--radius-lg); padding:32px; text-align:center">
+            <div style="font-size:2rem; margin-bottom:12px">🤖</div>
+            <h3 style="margin-bottom:8px">Have a question about ${topic.title}?</h3>
+            <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:20px">Ask our AI assistant for personalized answers and guidance.</p>
+            <a href="ai-search.html?q=${encodeURIComponent('How do I ' + topic.title.toLowerCase() + '?')}" class="btn btn-primary" id="ask-ai-btn">Ask AI →</a>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="topic-sidebar">
+          <!-- Quick Nav -->
+          <div class="sidebar-card">
+            <h4>In This Guide</h4>
+            <div style="display:flex; flex-direction:column; gap:8px">
+              ${(topic.steps || []).map(step => `
+                <div style="display:flex; align-items:center; gap:10px; padding:8px; border-radius:var(--radius-sm); transition:all var(--transition-fast); cursor:default">
+                  <span style="width:20px; height:20px; display:flex; align-items:center; justify-content:center; background:var(--primary-light); border-radius:50%; font-size:0.7rem; font-weight:700; color:var(--primary); flex-shrink:0">${step.step}</span>
+                  <span style="font-size:0.8rem; color:var(--text-muted)">${step.title}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Other Topics -->
+          <div class="sidebar-card">
+            <h4>More Topics</h4>
+            <div style="display:flex; flex-direction:column; gap:8px">
+              ${otherTopics.map(t => `
+                <a href="topic-detail.html?id=${t.id}" style="display:flex; align-items:center; gap:10px; padding:8px; border-radius:var(--radius-sm); text-decoration:none; transition:all var(--transition-fast)" class="sidebar-topic-link" id="sidebar-${t.id}">
+                  <span style="font-size:1.1rem">${t.icon}</span>
+                  <span style="font-size:0.85rem; color:var(--text-secondary); font-weight:500">${t.title}</span>
+                </a>
+              `).join('')}
+              <a href="explore.html" style="font-size:0.8rem; color:var(--primary); padding:8px; display:block">View all topics →</a>
+            </div>
+          </div>
+
+          <!-- Share / Actions -->
+          <div class="sidebar-card">
+            <h4>Actions</h4>
+            <div style="display:flex; flex-direction:column; gap:8px">
+              <a href="ai-search.html" class="btn btn-secondary btn-sm btn-block" id="sidebar-ai-btn">🤖 Ask AI</a>
+              <a href="resources.html" class="btn btn-ghost btn-sm btn-block" id="sidebar-res-btn">📚 Resources</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    `;
+
+    // Sidebar link hover styles
+    document.querySelectorAll('.sidebar-topic-link').forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        link.style.background = 'var(--bg-elevated)';
+        link.querySelector('span:last-child').style.color = 'var(--text-primary)';
+      });
+      link.addEventListener('mouseleave', () => {
+        link.style.background = '';
+        link.querySelector('span:last-child').style.color = '';
+      });
+    });
+  });
+</script>
+</body>
+</html>

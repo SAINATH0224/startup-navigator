@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin Dashboard – Startup Navigator. Manage articles, resources, and view platform statistics.">
+  <title>Admin Dashboard – Startup Navigator</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+
+<div class="admin-page">
+  <!-- Admin Header -->
+  <div class="admin-header">
+    <div class="container">
+      <div class="admin-header-inner">
+        <div>
+          <h1 class="admin-title">⚙️ Admin <span class="text-gradient">Dashboard</span></h1>
+          <p class="admin-subtitle">Manage articles, resources, and monitor platform activity.</p>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap">
+          <a href="index.html" class="btn btn-secondary btn-sm" id="admin-view-site-btn">🌐 View Site</a>
+          <button class="btn btn-danger btn-sm" onclick="Auth.logout()" id="admin-logout-btn">🚪 Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Stats Grid -->
+    <div class="stats-grid" id="stats-section">
+      <div class="stat-card">
+        <div class="stat-card-glow" style="--stat-color: var(--primary)"></div>
+        <div class="stat-icon">📝</div>
+        <div class="stat-value" id="stat-topics">—</div>
+        <div class="stat-label">Total Articles</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-glow" style="--stat-color: var(--secondary)"></div>
+        <div class="stat-icon">📎</div>
+        <div class="stat-value" id="stat-resources">—</div>
+        <div class="stat-label">Total Resources</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-glow" style="--stat-color: var(--accent-green)"></div>
+        <div class="stat-icon">🔍</div>
+        <div class="stat-value" id="stat-searches">—</div>
+        <div class="stat-label">Total AI Searches</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-glow" style="--stat-color: var(--accent-orange)"></div>
+        <div class="stat-icon">👥</div>
+        <div class="stat-value" id="stat-users">—</div>
+        <div class="stat-label">Registered Users</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-tabs-bar" id="admin-tabs-bar">
+      <button class="admin-tab active" data-panel="panel-articles" id="admin-tab-articles">📝 Articles</button>
+      <button class="admin-tab" data-panel="panel-resources" id="admin-tab-resources">📎 Resources</button>
+      <button class="admin-tab" data-panel="panel-searches" id="admin-tab-searches">🔍 Search History</button>
+    </div>
+
+    <!-- Panel: Articles -->
+    <div class="admin-panel active" id="panel-articles">
+      <div class="admin-section-header">
+        <div class="admin-section-title">Manage Articles</div>
+        <button class="btn btn-primary btn-sm" onclick="Admin.newTopic()" id="btn-add-article">+ Add Article</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Accent Color</th>
+              <th>Steps</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="topics-tbody">
+            <tr><td colspan="5" class="empty-row"><div class="spinner" style="margin:0 auto"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Panel: Resources -->
+    <div class="admin-panel" id="panel-resources">
+      <div class="admin-section-header">
+        <div class="admin-section-title">Manage Resources</div>
+        <button class="btn btn-primary btn-sm" onclick="Admin.newResource()" id="btn-add-resource">+ Add Resource</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>URL</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="resources-tbody">
+            <tr><td colspan="5" class="empty-row"><div class="spinner" style="margin:0 auto"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Panel: Searches -->
+    <div class="admin-panel" id="panel-searches">
+      <div class="admin-section-header">
+        <div class="admin-section-title">Recent AI Searches</div>
+        <span style="font-size:0.875rem; color:var(--text-muted)">Last 20 searches</span>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Query</th>
+              <th>User</th>
+              <th>Date</th>
+              <th>Time Ago</th>
+            </tr>
+          </thead>
+          <tbody id="searches-tbody">
+            <tr><td colspan="4" class="empty-row"><div class="spinner" style="margin:0 auto"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ARTICLE MODAL ─────────────────────────────────────── -->
+<div class="modal-backdrop" id="topic-modal">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-header">
+      <div class="modal-title" id="topic-modal-title">Add New Article</div>
+      <button class="modal-close" onclick="closeModal('topic-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="topic-form" onsubmit="Admin.saveTopic(); return false;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Article Title *</label>
+            <input class="form-input" type="text" id="topic-title" placeholder="e.g. Company Registration" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Icon (Emoji)</label>
+            <input class="form-input" type="text" id="topic-icon" placeholder="🏢" maxlength="4">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Accent Color</label>
+            <input class="form-input" type="color" id="topic-color" value="#6C63FF">
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Short Description (for cards)</label>
+            <input class="form-input" type="text" id="topic-shortDesc" placeholder="Brief one-line description for topic cards" maxlength="120">
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Full Description *</label>
+            <textarea class="form-input form-textarea" id="topic-description" placeholder="Detailed description of this topic..." required></textarea>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Keywords (comma-separated)</label>
+            <input class="form-input" type="text" id="topic-keywords" placeholder="register, company, incorporation, mca">
+            <p class="form-helper">Used by AI search to find this article</p>
+          </div>
+        </div>
+
+        <!-- Steps -->
+        <div style="margin-top:8px">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px">
+            <label class="form-label" style="margin:0">Steps</label>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="Admin.addStep()">+ Add Step</button>
+          </div>
+          <div id="steps-container" style="display:flex; flex-direction:column; gap:12px">
+            <!-- Steps rendered by JS -->
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('topic-modal')" id="cancel-topic-btn">Cancel</button>
+      <button class="btn btn-primary" onclick="Admin.saveTopic()" id="save-topic-btn">💾 Save Article</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── RESOURCE MODAL ────────────────────────────────────── -->
+<div class="modal-backdrop" id="resource-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="resource-modal-title">Add New Resource</div>
+      <button class="modal-close" onclick="closeModal('resource-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="resource-form" onsubmit="Admin.saveResource(); return false;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Resource Title *</label>
+            <input class="form-input" type="text" id="res-title" placeholder="e.g. MCA21 Portal" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Icon (Emoji)</label>
+            <input class="form-input" type="text" id="res-icon" placeholder="🔗" maxlength="4">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select class="form-input form-select" id="res-category" required>
+              <option value="" disabled selected>Select category</option>
+              <option>Government</option>
+              <option>Templates</option>
+              <option>Legal</option>
+              <option>Funding</option>
+              <option>Tools</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">URL *</label>
+            <input class="form-input" type="text" id="res-url" placeholder="https://example.com or #template-name" required>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Description</label>
+            <textarea class="form-input form-textarea" id="res-description" placeholder="Brief description of this resource..." rows="3"></textarea>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Tags (comma-separated)</label>
+            <input class="form-input" type="text" id="res-tags" placeholder="government, registration, compliance">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('resource-modal')" id="cancel-resource-btn">Cancel</button>
+      <button class="btn btn-primary" onclick="Admin.saveResource()" id="save-resource-btn">💾 Save Resource</button>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
